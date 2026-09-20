@@ -29,6 +29,10 @@ decision document in Chinese.
 Don't skip steps. **Reaching step 3 without doing steps 1 and 2 is the most common way these
 conversations fail** — it sends you off to verify something nobody asked for.
 
+Steps 1-3 have operational detail in `references/premises-and-evidence.md`: how to work
+backwards into premises, the provenance triple, and how to run each evidence tier. Read it
+before Phase 2.
+
 ## The rule that outranks the others
 
 **Ask one question, then stop and wait.**
@@ -104,9 +108,11 @@ Restate the situation in 2-3 sentences, then move to Phase 2.
 
 ### Phase 2 — Provenance and premises
 
+Read `references/premises-and-evidence.md` before starting; both halves of this phase are
+covered there in detail.
+
 Run the provenance check on each key claim. Then extract the premises: **what has to be true
 for this decision to hold?**
-
 Be willing to take a position on what you find. If a premise has nothing behind it, say so —
 "this one is currently empty" — and give the counter-evidence you observed, e.g. "the repo
 contains zero DocTypes".

@@ -200,8 +200,13 @@ python3 scripts/validate.py
 ```
 
 It verifies that the fence opens and closes, that the block is valid YAML, that `name` and
-`description` are present and within the limits consumers enforce, and that every
-`references/` path named in `SKILL.md` exists.
+`description` are present and within the limits consumers enforce, and that `references/`
+lines up in both directions — every path named in `SKILL.md` exists, and no file in
+`references/` is orphaned.
+
+The orphan check is worth having: a reference file nothing points at is content no agent
+will ever read, and the skill quietly loses whatever it describes. Reachability is followed
+transitively, so a file linked only from another reference still counts.
 
 Two limits it knows about:
 

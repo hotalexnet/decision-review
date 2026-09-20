@@ -183,7 +183,9 @@ python3 -m pip install pyyaml
 python3 scripts/validate.py
 ```
 
-它检查 fence 有没有闭合、内容是不是合法 YAML、`name` 和 `description` 在不在、以不在消费端强制的长度上限内，以及 `SKILL.md` 里提到的 `references/` 文件是不是真的存在。
+它检查 fence 有没有闭合、内容是不是合法 YAML、`name` 和 `description` 在不在、是不是在消费端强制的长度上限内，以及 `references/` 两边对不对得上——`SKILL.md` 里提到的路径都存在，且 `references/` 里没有没人指向的文件。
+
+孤儿检查值得留着：一个没人指向的引用文件，就是 agent 永远不会读的内容，技能会静默丢掉它描述的那部分能力。可达性是**传递**判断的，只被另一个引用文件链接到的文件也算数。
 
 它知道两个上限：
 

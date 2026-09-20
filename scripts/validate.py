@@ -110,16 +110,42 @@ def check_description(data: dict) -> None:
 
 
 def check_references(text: str) -> None:
+    """Check both directions: referenced files exist, and nothing is orphaned.
+
+    Orphans matter because a file in references/ that SKILL.md never points at is
+    content no agent will ever read — the skill silently loses whatever it describes.
+    Reachability follows links transitively, so a file referenced only from another
+    reference still counts.
+    """
     body = text.split("\n---\n", 1)[-1]
-    referenced = sorted(set(REF_RE.findall(body)))
-    if not referenced:
-        warn("SKILL.md references no files under references/")
-        return
-    missing = [r for r in referenced if not (SKILL_ROOT / r).exists()]
+    ref_dir = SKILL_ROOT / "references"
+
+    reached: set[str] = set()
+    frontier = set(REF_RE.findall(body))
+    while frontier:
+        ref = frontier.pop()
+        if ref in reached:
+            continue
+        reached.add(ref)
+        path = SKILL_ROOT / ref
+        if path.exists():
+            frontier |= set(REF_RE.findall(path.read_text(encoding="utf-8")))
+
+    missing = sorted(r for r in reached if not (SKILL_ROOT / r).exists())
     for ref in missing:
         fail(f"SKILL.md references {ref}, which does not exist")
-    if not missing:
-        print(f"  references: {len(referenced)} referenced, all present")
+
+    orphans: list[str] = []
+    if ref_dir.is_dir():
+        for path in sorted(ref_dir.glob("*.md")):
+            rel = f"references/{path.name}"
+            if rel not in reached:
+                orphans.append(rel)
+    for orphan in orphans:
+        fail(f"{orphan} exists but nothing points at it — no agent will ever read it")
+
+    if not missing and not orphans:
+        print(f"  references: {len(reached)} reachable, none orphaned")
 
 
 def main() -> int:
