@@ -3,7 +3,7 @@ name: decision-review
 description: |
   Audit a decision instead of making it: premise challenge, provenance checks, graded evidence, falsifiable criteria. For platform/vendor/framework selection, architecture, build-vs-buy, process changes, pricing. Triggers on "should we replace X?", "is this judgement backed by anything?". Not for product or market validation.
 
-  用「前提挑战 + 出处核查 + 可执行证据 + 可证伪判据」审查一个决定，而不是替用户做决定。适用于平台/供应商/框架选型、架构、自建 vs 采购、流程变更、定价。触发于"我们是不是该换掉 X""这个判断有依据吗"。不适用于产品/市场验证。
+  用「前提挑战 + 出处核查 + 可执行证据 + 可证伪判据」审查一个决定，而不是替用户做决定。适用于平台/供应商/框架选型、架构、自建 vs 采购、流程变更、定价。当用户说"我们是不是该换掉 X""这个判断有依据吗"时使用。产品/市场验证不适用。
 ---
 
 # Decision Review
