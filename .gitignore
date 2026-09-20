@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Skill runtime artifacts (created inside a target repo, not here)
+.agents/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
