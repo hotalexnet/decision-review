@@ -1,87 +1,112 @@
 # decision-review
 
-审查一个决定，而不是替你做决定。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Runtime: Python 3](https://img.shields.io/badge/runtime-python3-blue.svg)](https://www.python.org/)
+[![Standard: Agent Skills](https://img.shields.io/badge/standard-agent--skills-2ea44f.svg)](https://agentskills.io/specification)
+[![Scope: Investigation](https://img.shields.io/badge/scope-investigation-8957e5.svg)](#scope)
 
-产出是一份把分歧钉在**可检验点**上的文档：前提列清了、出处查过了、证据分级过了、
-每个方案配了能证伪的判据。
+**English** | [**中文**](./README.zh-CN.md)
 
-## 边界：靠调查收敛 vs 靠市场接触收敛
+**Audit a decision instead of making it.**
 
-这个 skill 只处理**能靠调查收敛**的问题。
+A skill for coding agents that reviews decisions which can be settled by investigation.
+It extracts the premises, checks who actually said what, grades the evidence, and hands
+back falsifiable criteria — instead of a confident recommendation.
 
-| | decision-review | office-hours（不在本仓库） |
+## Why this exists
+
+Ask an agent "should we switch platforms?" and you get an answer. The answer is usually
+confident, usually plausible, and usually resting on a premise nobody verified.
+
+The failure mode is not bad reasoning. It is **skipped premise extraction**: the agent
+argues from assumptions it never surfaced, and the user can't see which assumption the
+conclusion hangs on.
+
+Worse, some of those assumptions are recorded in the wrong place. A throwaway line in a
+handoff note — "database should be its own Postgres" — gets filed next to verbatim
+stakeholder quotes, and within a week it has the same authority as a signed requirement,
+having silently overridden a formal decision document that nobody remembers writing.
+
+This skill exists to catch that. It makes the agent stop, name the premises, find out who
+said what, and say plainly when the evidence isn't there yet.
+
+## Scope
+
+The boundary is **how the question converges**, not which domain it belongs to:
+
+| | `decision-review` | product/market validation |
 | --- | --- | --- |
-| 问题 | **这个决定对不对** | **这件事值得做吗** |
-| 收敛方式 | 调查：读文档、查源码、问干系人、看数据 | 市场接触：找用户、要钱、看留存 |
-| 失败标志 | 前提没被检验 | 没人愿意付钱 |
+| Question | Is this decision correct? | Is this worth building? |
+| Converges by | **Investigation** — read the docs, check the source, ask the stakeholder, query the data | **Market contact** — find users, take money, watch retention |
+| Failure signal | A premise was never tested | Nobody will pay |
 
-所以它**不限于技术/架构**。同样适用于供应商选型、要不要接某个客户、定价、
-自建还是采购、流程变更、合同取舍。
+Because the boundary is convergence mode, this skill is **not limited to technical or
+architectural work**. It applies equally to:
 
-**产品/市场验证请用 gstack 的 `/office-hours`**（跑在 Claude Code 里，带 brain 和
-session tiers 的完整版）。不要在这里重复实现。
+- platform, vendor, and framework selection
+- architecture and migration decisions
+- taking on a client, or turning one down
+- build vs. buy vs. self-host
+- process and workflow changes
+- pricing and contract trade-offs
+- hiring or outsourcing
 
-## 四个机制
+It does **not** apply to product/market validation — that needs market contact, not
+investigation.
 
-1. **提取前提** —— 这个决定依赖哪些假设？逐条标明 `已验证 / 未验证 / 偏好`
-2. **核查出处** —— 谁说的、以什么身份、记在什么格式里
-3. **证据分级** —— 廉价（本地可查，必须先查）/ 昂贵（标未验证+写代价）/ 没有（直说是偏好）
-4. **可证伪判据** —— 什么结果意味着什么，而不是一个推荐
+## The four mechanisms
 
-**最容易跳过、也最常出问题的是第 2 条。** 最高危的组合是：内部判断被记进了
-正式格式（"客户要求"、"不可协商"、"原话"）。一旦这样记录，它就有了跟外部约束
-同等的效力，而没人知道它是怎么生效的——它会静默覆盖已有的正式决策。
+1. **Extract the premises** — what has to be true for this decision to hold? Mark each
+   one `verified`, `unverified`, or `preference`.
+2. **Check the provenance** — who said it, in what capacity, and where is it recorded?
+3. **Grade the evidence** — cheap (must be read), expensive (name the cost, don't guess),
+   or absent (call it a preference).
+4. **Produce falsifiable criteria** — what result means what, instead of one recommendation.
 
-## 结构
+### One question at a time
 
-```
-SKILL.md                            骨架：四步机制、一次一问、证据规则、Phase 0-6
-references/
-  premises-and-evidence.md          前提/出处/证据的操作细则 + 取位分寸
-  decision-brief.md                 D<N>/ELI10/Recommendation/判据 格式 + 排除项声明规则
-  decision-doc-template.md          输出模板 + 质量自检（含"已否定路径"和"未决问题"）
-scripts/
-  profile.py                        仓库内决策画像（read/summary/append）
-provenance/                         decision-brief 格式的借用出处（gstack, MIT）
-```
+Ask one question, then stop and wait.
 
-## 规模
+Batch three questions and you get three shallow answers. Ask one, stay quiet, and the
+second or third answer is the real one. This single rule carries most of the value — it
+is why a review takes longer than a recommendation and reaches a different place.
 
-| | 行数 |
-| --- | --- |
-| SKILL.md（常驻，仅触发时加载） | 约 175 |
-| references/（按需加载） | 约 300 |
-| scripts/profile.py | 约 180 |
+### Evidence tiers
 
-## 记忆层
+| Tier | Examples | What to do |
+| --- | --- | --- |
+| **Cheap** | repo docs, config, source, logs, data, git history | **Must read before taking any position** |
+| **Expensive** | asking stakeholders, gathering data, running experiments, trialling competitors | Do not guess. Mark `unverified`, name the cost to settle it |
+| **Absent** | taste, preference | Say it's a preference. Don't dress it up as "architecture" |
 
-`.agents/profile.md`，写在仓库里，跟代码走、跨 agent 可用。与 `repo-checkpoint`
-的 `.agents/checkpoints/` 互补：
+### Provenance — the check that gets skipped
 
-- **checkpoints** = 任务状态（这件事做到哪了）
-- **profile** = 决策画像（这个人怎么决策、反复卡在哪）
+Provenance needs no technical skill, which is exactly why it's the one everybody skips.
+The highest-risk combination is **an internal judgement recorded in a formal format** —
+"the customer requires", "non-negotiable", "exact wording".
 
-`summary` 会聚合跨会话信号并标出重复项，让下一次会话能直接说"上次你也卡在这里"，
-而不是从零开始。
+Once recorded that way it carries the authority of an external constraint, and nobody can
+tell how it took effect. The standard action: find the **existing formal decision
+document**, compare it against the current conclusion, and when they conflict, **report
+the conflict rather than resolving it** — say which documents disagree and who needs to
+settle it.
 
-信号词表在 `scripts/profile.py` 的 `SIGNALS`。**复用，不要自创**——
-看到词表里没有的模式时，记进 `--note` 并说明缺哪个信号。
+## Install
 
-## 安装
-
-`~/.agents/skills` 是多个 harness 共用的技能根，装一次三家同时生效：
+`~/.agents/skills` is the shared skill root used by several harnesses, so one copy works
+in all of them:
 
 ```bash
-cp -R . ~/.agents/skills/decision-review
+git clone https://github.com/hotalexnet/decision-review.git ~/.agents/skills/decision-review
 ```
 
-| Harness | 读取的技能根 | 需要额外做什么 |
+| Harness | Skill roots it reads | Extra step |
 | --- | --- | --- |
-| **pi** | `~/.agents/skills`、`~/.pi/agent/skills` | 无 |
-| **Codex** | `~/.codex/skills` + `~/.agents/skills` | 无 |
-| **dsh**（DeepSeek Harness） | `~/.dsh/skills` + `~/.agents/skills` | 无 |
-| **opencode** | `~/.config/opencode/skills/`、`<repo>/.opencode/skills/` | 加符号链接 |
-| **Claude Code** | `~/.claude/skills/` | 加符号链接 |
+| **pi** | `~/.agents/skills`, `~/.pi/agent/skills` | none |
+| **Codex** | `~/.codex/skills` + `~/.agents/skills` | none |
+| **dsh** (DeepSeek Harness) | `~/.dsh/skills` + `~/.agents/skills` | none |
+| **opencode** | `~/.config/opencode/skills/`, `<repo>/.opencode/skills/` | symlink |
+| **Claude Code** | `~/.claude/skills/` | symlink |
 
 ```bash
 # opencode
@@ -92,33 +117,141 @@ ln -s ~/.agents/skills/decision-review ~/.config/opencode/skills/decision-review
 ln -s ~/.agents/skills/decision-review ~/.claude/skills/decision-review
 ```
 
-## 验证它是否有效
+Requirements: Python 3 (standard library only), and `git` for the profile layer.
 
-| 检查项 | 通过条件 |
+## Usage
+
+Any phrasing that asks whether a decision holds:
+
+```
+"Should we switch off X?"
+"Help me review this decision."
+"我们是不是该换掉 X？"
+"Is this judgement backed by anything?"
+```
+
+A review runs through:
+
+```
+Phase 0  What decision is actually being made?
+Phase 1  Read the cheap evidence. Nothing is said before this.
+Phase 2  Check provenance. Extract the premises.
+Phase 3  Confirm the premises, one at a time.          <- the highest-value gate
+Phase 4  2-3 genuinely different options + falsifiable criteria table
+Phase 5  Write the decision document
+Phase 6  Signal reflection, one concrete assignment, write the profile
+```
+
+Each decision point is emitted as a **decision brief** — a compact markdown block with an
+ELI10 of the trade-off, an explicit recommendation, and honest cons on every option:
+
+```
+D2 — What is the cheapest way to settle whether the material boundary is real?
+
+ELI10: ...
+
+Stakes if wrong: ...
+
+Recommendation: B because ...
+
+Completeness: A=4/10, B=9/10
+
+A) Evaluate competing platforms first  (recommended)
+   ✅ ...
+   ❌ ...
+B) Write the platform-neutral domain model, then prototype
+   ✅ ...
+   ❌ ...
+
+Net: ...
+```
+
+If the harness provides a structured question tool (`ask_user_question` in dsh,
+`AskUserQuestion` in Claude Code), the brief is delivered through it. Otherwise it is a
+plain markdown message and the user's typed reply is the decision.
+
+Calling an option **rejected** is never silent — excluded options are always named with
+the reason for excluding them.
+
+## Structure
+
+```
+SKILL.md                            the spine: four mechanisms, evidence rules, Phase 0-6
+references/
+  premises-and-evidence.md          premise extraction, provenance checks, evidence grading, posture
+  decision-brief.md                 D<N> brief format, 4-option cap, exclusion-labelling rule
+  decision-doc-template.md          output template + quality self-check
+scripts/
+  profile.py                        repo-local decision profile (read / summary / append)
+provenance/                         the borrowed decision-brief format, kept as source of record
+```
+
+`SKILL.md` is the only always-loaded file (~175 lines); references load on demand.
+
+## The memory layer
+
+Written to `.agents/profile.md` inside the target repo, so it travels with the code and
+works across harnesses. It complements task checkpoints rather than replacing them:
+
+- **task checkpoints** (e.g. [`repo-checkpoint`](https://github.com/hotalexnet/agent-checkpoint)) — *where is this task*
+- **decision profile** — *how does this person decide, and what do they keep getting stuck on*
+
+```bash
+python3 scripts/profile.py read      # at Phase 1
+python3 scripts/profile.py append --kind technical --signal unvalidated_premise --note "..."
+python3 scripts/profile.py summary   # aggregate across sessions, flag repeats
+```
+
+```console
+$ python3 scripts/profile.py summary
+sessions recorded: 3
+
+recurring signals (push here first):
+  unvalidated_premise        2   <-- repeating
+  action_over_analysis       2   <-- repeating
+  domain_expertise           1
+```
+
+Repeats are the point: they let a later session open with "you got stuck here last time"
+instead of starting from zero.
+
+The signal vocabulary lives in `scripts/profile.py`. Reuse it rather than inventing new
+signals — if you see a pattern the vocabulary lacks, record it in `--note` and say so.
+
+## Verifying it works
+
+| Check | Pass condition |
 | --- | --- |
-| 一次一问 | 每个问题后停下等回答，不一连串问 |
-| 先查再表态 | 给出立场前先读了本地可查的证据 |
-| 出处被核查 | 至少有一条关键论断被追问"这是谁说的" |
-| 前提被挑战 | 至少一条前提被标为未验证或直接被推翻 |
-| 判据可证伪 | 有"观察到 X 说明方案 A 错了"这类的条目 |
-| profile 被写入 | `.agents/profile.md` 有真实信号 |
-| 没有滑向实施 | 全程没有开始写代码/改配置 |
+| One question at a time | It stops after each question and waits |
+| Evidence before position | It read the locally checkable evidence before taking a stance |
+| Provenance checked | At least one key claim was challenged with "who said this?" |
+| Premises challenged | At least one premise was marked unverified or overturned |
+| Criteria are falsifiable | There is a "observing X means option A is wrong" entry |
+| Profile written | `.agents/profile.md` contains real signals |
+| No drift into implementation | It never started writing code or changing config |
 
-### 已知的验证局限
+### Known limitation
 
-本 skill 的锐度**部分来自执行者自己的上下文**（读过仓库文档、读过框架源码），
-无法与 `SKILL.md` 本身的贡献分离。干净的对照需要一个新的、只拿到 SKILL.md 的会话。
+How sharp a review gets depends partly on the executing agent's own context — how much of
+the repo it read, whether it checked the framework source. That cannot be separated from
+what `SKILL.md` contributes on its own. A clean comparison would need a fresh session
+holding nothing but `SKILL.md`.
 
-## 出处
+This skill was extracted from a real session and has been run end to end once, on a
+platform-selection decision, where it falsified a stated technical blocker by reading the
+framework source. Treat the verification checklist as the honest bar, not the claim.
 
-`references/decision-brief.md` 的格式提取自 gstack 的 `/office-hours`
-（MIT, Garry Tan），原始文本见 `provenance/`。
-gstack 的产品/市场诊断正文评估后未采用——见 `provenance/README.md`。
+## Attribution
+
+The decision-brief format, along with parts of the posture and anti-sycophancy rules, is
+derived from [gstack](https://github.com/garrytan/gstack) by Garry Tan (MIT). See
+[THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md) for the per-file derivation and the
+full license text.
+
+The product/market skill that gstack's version came from was evaluated and deliberately
+**not** carried over — it converges by market contact, which is a different mechanism.
+See [`provenance/`](./provenance/README.md).
 
 ## License
 
-MIT —— 见 [LICENSE](./LICENSE)。
-
-`references/decision-brief.md` 与 `references/premises-and-evidence.md` 含派生自 gstack
-（MIT, Copyright (c) 2026 Garry Tan）的内容，署名与许可证原文见
-[THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md)。
+MIT — see [LICENSE](./LICENSE).
