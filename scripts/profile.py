@@ -21,22 +21,22 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-# 复用，不要自创。缺信号时记进 note 并说明词表缺什么。
+# Reuse these, don't invent new ones. A missing signal goes in the note, not the vocabulary.
 SIGNALS = {
-    # 已经观察到的强项 —— 可以依赖
-    "evidence_seeking",     # 主动去找可查的证据
-    "provenance_checked",   # 会追问"这是谁说的"
-    "reversed_on_evidence", # 被证据说服后改立场
-    "domain_expertise",     # 领域知识扎实，结论具体
-    "decisive",             # 能在信息不全时拍板
-    "pushback",             # 顶回挑战，且理由自洽
-    # 需要优先推的惯性 —— 下次先推这里
-    "unvalidated_premise",  # 带着未验证前提往下走
-    "sourced_from_handoff", # 关键事实只存在于交接笔记/聊天记录
-    "authority_confusion",  # 内部判断被当成外部要求
-    "action_over_analysis", # 用动手回避建模
-    "sunk_cost_reasoning",  # 用"已经投入了"当理由
-    "preference_as_principle",  # 偏好被包装成架构原则/最佳实践
+    # Strengths already observed — you can rely on these
+    "evidence_seeking",     # goes and finds checkable evidence unprompted
+    "provenance_checked",   # asks "who actually said this"
+    "reversed_on_evidence", # changed position when shown better evidence
+    "domain_expertise",     # knows the domain; conclusions are specific
+    "decisive",             # will commit with incomplete information
+    "pushback",             # pushes back on a challenge, with coherent reasoning
+    # Recurring habits — push on these first next time
+    "unvalidated_premise",  # proceeds on a premise nobody checked
+    "sourced_from_handoff", # a load-bearing fact exists only in a handoff note or chat log
+    "authority_confusion",  # an internal judgement treated as an external requirement
+    "action_over_analysis", # uses doing to avoid modelling
+    "sunk_cost_reasoning",  # "we've already invested" as a reason
+    "preference_as_principle",  # a preference dressed up as architecture or best practice
     "scope_creep",
 }
 

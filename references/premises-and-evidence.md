@@ -1,111 +1,122 @@
-# 前提、出处与证据
+# Premises, Provenance, Evidence
 
-审查一个决定时，真正的工作量在这三件事上。跳过任何一件，后面的结论都是空中楼阁。
+When you're auditing a decision, the work is in these three things. Skip any one of them and
+whatever follows is built on sand.
 
-## 1. 提取前提
+## 1. Extract the premises
 
-一个决定要成立，必须有哪些事是真的？
+What has to be true for this decision to hold?
 
-**做法：** 从当前结论往回推。用户说"应该换掉 X"，那这条结论依赖：
-X 做不到某件事 / 我们试过了 / 代价不可接受 / 换掉之后能解决。
-把这四条逐一列出来，看清哪条有证据。
+**How:** work backwards from the current conclusion. If the user says "we should replace X",
+that conclusion rests on: X can't do something / we already tried / the cost of X is
+unacceptable / replacing it would fix the problem. List those four, and see which has
+evidence behind it.
 
-**分类标注每一条前提：**
+**Label each one:**
 
-| 标记 | 含义 | 处理 |
+| Label | Meaning | What to do |
 | --- | --- | --- |
-| `已验证` | 有可指出的证据（文件、数据、实测） | 引用出处 |
-| `未验证` | 没有证据，但可以去查 | 写明**什么证据能定论** + 获取代价 |
-| `偏好` | 不是事实判断，是倾向 | 直说是偏好，不要包装 |
+| `verified` | Has evidence you can point at (file, data, measurement) | Cite the source |
+| `unverified` | No evidence, but it could be obtained | State **what would settle it** + the cost of getting it |
+| `preference` | Not a factual claim, a leaning | Say it's a preference. Don't dress it up |
 
-**危险信号：** 所有前提看起来都是 `已验证`。这通常意味着你没有真正往回推，
-只是把结论重述了一遍。
+**Danger sign:** every premise looks `verified`. That usually means you didn't actually work
+backwards — you restated the conclusion.
 
-## 2. 出处核查
+## 2. Check the provenance
 
-对每条关键论断问三件事。**这一步比找证据更常出问题，因为它不需要技术能力，
-所以最容易被跳过。**
+Ask three things of every key claim. **This step goes wrong more often than the evidence
+step, and it needs no technical skill — which is exactly why it gets skipped.**
 
-- **谁说的？** 干系人 / 用户 / 同事 / 你自己 / 前任 agent
-- **以什么身份？** 原话要求 / 内部判断 / 推断 / 传闻
-- **记在哪？** 正式决策文档 / 需求文档 / 交接笔记 / 聊天记录
+- **Who said it?** Stakeholder / user / colleague / yourself / a previous agent
+- **In what capacity?** A verbatim requirement / an internal judgement / an inference / hearsay
+- **Recorded where?** A formal decision document / a requirements doc / a handoff note / a chat log
 
-**最高危的组合：** 内部判断，被记进了正式格式（"客户要求"、"不可协商"、
-"Exact wording worth preserving"）。
+**The highest-risk combination:** an internal judgement recorded in a formal format — "the
+customer requires", "non-negotiable", "exact wording worth preserving".
 
-一旦这样记录，它就有了跟外部约束同等的效力，
-**而且没有任何人知道它是怎么生效的**。它会静默覆盖已有的正式决策。
+Recorded that way, it carries the same authority as an external constraint, **and nobody can
+tell how it took effect.** It silently overrides a formal decision that already existed.
 
-**核查动作 —— 必做：**
+**The check — do this one:**
 
-1. 找出**已有的正式决策文档**（决策记录、ADR、冻结基线）
-2. 拿当前结论逐条比对
-3. 不一致时**报告矛盾，不要裁决**——说明"这两份文件互相矛盾，
-   需要 X 来定"，并列清矛盾的具体条目
+1. Find the **existing formal decision documents** (decision records, ADRs, frozen baselines)
+2. Compare the current conclusion against them, item by item
+3. When they disagree, **report the conflict, don't resolve it** — say "documents X and Y
+   contradict each other, and Z needs to settle it", and list the specific items in conflict
 
-**发现矛盾时的措辞要准确：** 不要说"这里有问题"，要说
-"8-24 决策文档写的是 A，9-20 的记录写的是 B，两者不兼容，且 B 只存在于交接笔记里"。
+**Be precise when you report a conflict.** Not "there's a problem here", but "the 24 Aug
+decision record says A, the 20 Sep note says B, the two are incompatible, and B exists only
+in a handoff note".
 
-## 3. 证据分级
+## 3. Grade the evidence
 
-| 级别 | 例子 | 处理 |
+| Tier | Examples | How to handle |
 | --- | --- | --- |
-| **廉价** | 仓库文档、配置、源码、日志、数据、历史提交 | **必须先查，再表态** |
-| **昂贵** | 问人、要数据、跑实验、试用竞品、招标 | 不许猜。标 `未验证` + 写明获取代价 |
-| **没有** | 纯偏好 | 直说是偏好 |
+| **Cheap** | repo docs, config, source, logs, data, commit history | **Must read before taking a position** |
+| **Expensive** | asking people, gathering data, running experiments, trialling competitors, tender | Don't guess. Mark `unverified` + name the cost |
+| **Absent** | preference | Say it's a preference |
 
-### 廉价证据的执行要点
+### Running the cheap tier
 
-- **技术断言必查源码。** 用户说"这个框架做不到 Y"，去找它的实现。
-  框架能力断言靠记忆回答，是最常见也最贵的错误。
-- **查完要给可指认的出处。** "`frappe/workflow/doctype/workflow/workflow.py`
-  的 `validate_docstatus()` 只有三条规则"比"Frappe 支持"强得多。
-- **反证比正证更有力。** 零结果也是证据：
-  "`find apps -iname '*doctype*'` 返回 0 条"直接说明领域模型从未写过。
-- **先查，再决定问不问。** 答案在文档里就不要问用户——问已知的东西会消耗信任。
+- **A technical claim means read the source.** When the user says "framework Y can't do Z",
+  go find the implementation. Answering framework-capability questions from memory is the
+  most common and most expensive mistake in this whole workflow.
+- **Point at something specific.** "`validate_docstatus()` in
+  `frappe/workflow/doctype/workflow/workflow.py` has exactly three rules" is worth far more
+  than "Frappe supports it".
+- **Counter-evidence beats confirmation.** A zero result is evidence: "`find apps -iname
+  '*doctype*'` returns 0 files" settles whether a domain model was ever written.
+- **Read before you ask.** If the answer is in the docs, don't ask the user. Asking for
+  something you could have read spends trust for nothing.
 
-### 昂贵证据的执行要点
+### Running the expensive tier
 
-- **不要因为拿不到就跳过前提确认。** 正确动作是把它变成 `未验证前提`，
-  继续走 Phase 3，写进"未决问题"。
-- **写明获取代价。** "需要半天手工走查"和"需要两周试用竞品"是两个完全不同的前提。
-- **给反向信号。** "如果半天内找不到任何问题，那本身就是结论——风险不存在。"
-  这让用户有动机去做那件昂贵的事。
+- **Don't skip premise confirmation just because you can't get the evidence.** The correct
+  move is to turn it into an `unverified` premise, keep going through Phase 3, and carry it
+  into open questions.
+- **Name the price.** "Half a day of manual walkthrough" and "two weeks trialling a
+  competitor" are very different premises.
+- **Offer a reverse signal.** "If you find nothing in half a day, that itself is the
+  answer — the risk doesn't exist." Give the user a reason to actually spend the money.
 
-## 4. 取位的分寸
+## 4. Taking a position
 
-你要敢于下判断，但判断要挂着证据。
+Be willing to commit, but keep the position attached to its evidence.
 
-- **每个立场都说明什么证据会改变它。** 这是取位，不是固执。
-- **挑战最强的版本。** 不要打稻草人。用户说了 B，就按 B 最强的那种解释去打。
-- **命名模式，不命名人。** 说"这是一个未经验证的前提"，
-  不要说"你这判断没依据"。
+- **Every position comes with what would change it.** That's taking a stance, not being
+  stubborn.
+- **Attack the strongest version.** Don't build a straw man. If the user said B, take the
+  most defensible reading of B.
+- **Name the pattern, not the person.** "This is an unverified premise", not "you have no
+  basis for this".
 
-### 不要说的话
+### Don't say
 
-| 不要说 | 要说 |
+| Don't | Do |
 | --- | --- |
-| "这个思路很有意思" | 取一个立场 |
-| "有很多角度可以看" | 选一个，说明什么会改变你的看法 |
-| "你可以考虑…" | "这个不成立，因为…" / "这个成立，因为…" |
-| "应该可行" | 说明基于现有证据行不行，以及缺什么证据 |
-| "我理解你为什么这么想" | 如果他错了，说他错在哪 |
+| "That's an interesting approach" | Take a position |
+| "There are many ways to look at this" | Pick one, say what would change your mind |
+| "You might want to consider…" | "This doesn't hold, because…" / "This holds, because…" |
+| "That should work" | Say whether it will work on the evidence you have, and what's missing |
+| "I can see why you'd think that" | If they're wrong, say they're wrong, and where |
 
-### 推一次，再推一次
+### Push once, then push again
 
-第一遍回答通常是包装过的版本。真答案在第二次或第三次追问之后。
-但注意分寸：
+The first answer is usually the polished one. The real answer arrives after the second or
+third push. But watch the dosage:
 
-- **对方已经给出具体证据（名字、数字、出处）时，就该问下一个问题**，
-  不要在同一点上推第四次
-- **对方连续两次顶回来，就接受并往下走**
-- **对方说了三次"不知道"，那也是数据**——记下来，往下走
+- **Once they've given something specific — a name, a number, a source — move on.** Don't
+  push a fourth time on the same point.
+- **If they push back twice, take the answer and move.**
+- **If they say "I don't know" three times, that's data too.** Record it and move.
 
-严谨不等于不依不饶。一条前提已经具体了，正确的下一步是**下一个前提**。
+Being rigorous isn't the same as being relentless. Once a premise is specific, the correct
+next move is the *next* premise.
 
-### 用户连续选同一个方向时
+### When the user picks the same direction repeatedly
 
-如果用户在多轮里反复选择同一个方向（比如每次都在"先动手"和"先想清楚"
-之间选前者），**把它说出来并记录**。一次是偏好，两次是模式。
-模式会影响后面每一步的证据质量，属于该被 review 的东西，
-而不属于该被默默接受的偏好。
+If across several rounds the user consistently picks one kind of option — say, always
+"start doing" over "think first" — **say so and record it.** Once is a preference; twice is
+a pattern. A pattern affects the quality of evidence at every later step, so it belongs in
+the review rather than being quietly accommodated.

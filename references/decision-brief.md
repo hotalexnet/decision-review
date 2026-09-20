@@ -1,82 +1,91 @@
-# 决策简报格式
+# Decision Brief Format
 
-## 先分清：事实问题 vs 决策问题
+## First: factual questions vs decisions
 
-**事实澄清用普通问句。** "这句话是谁说的？""你们试过吗？""现在线上是什么版本？"
-不要给它们套简报格式——那会让一个一句话能答的问题看起来像需要权衡的抉择。
+**Factual clarifications use a plain question.** "Who said this?" "Have you tried it?" "What
+version is in production?" Don't wrap these in the brief format — it makes a one-line
+question look like a trade-off that needs weighing.
 
-**决策点用决策简报。** 需要用户在几个选项之间做选择时使用。
+**Decision points use a decision brief.** When the user has to choose between options.
 
-判断方法：**如果你已经能给出推荐，它是决策；如果你只是想获取信息，它是问句。**
+The test: **if you can already name a recommendation, it's a decision. If you're only
+gathering information, it's a question.**
 
-## 格式
+## Format
 
 ```
-D<N> — <一句话问题标题>
-<项目/分支/一句背景>
+D<N> — one-line title of the question
+<project/branch/one line of grounding>
 
-ELI10: <大白话，2-4 句，说清赌注>
+ELI10: <plain language, 2-4 sentences, name the stakes>
 
-Stakes if wrong: <一句话——搞错了会坏什么、丢什么>
+Stakes if wrong: <one sentence — what breaks, what's lost>
 
-Recommendation: <选项> because <一句话理由>
+Recommendation: <option> because <one-line reason>
 
 Completeness: A=X/10, B=Y/10
 
-A) <选项名> (recommended)
-   ✅ <具体、可观察的优点>
-   ❌ <诚实的缺点>
-B) <选项名>
-   ✅ <优点>
-   ❌ <缺点>
+A) <option name> (recommended)
+   ✅ <concrete, observable pro>
+   ❌ <honest con>
+B) <option name>
+   ✅ <pro>
+   ❌ <con>
 
-Net: <一句话说清实际在交换什么>
+Net: <one line saying what's actually being traded off>
 ```
 
-## 规则
+## Rules
 
-- **`D<N>` 编号：** 本次会话第一个决策是 `D1`，依次递增。这是你自己的计数器。
-- **ELI10 必须存在**，必须是大白话。用户应该不需要领域知识就能理解这个权衡。
-- **`Recommendation` 必须存在**，包括你没有强烈倾向时：
-  `Recommendation: A — 这是偏好问题，我没有强倾向。`
-  同时 `(recommended)` 仍要挂在默认选项上。
-- **`Completeness` 只在选项之间是"覆盖度"差异时用**，不是"种类"差异时用：
-  `10/10` 完整 / `7/10` 只覆盖正常路径 / `3/10` 走捷径。
-  如果是种类差异，写：`Note: 选项之间是种类差异，不是覆盖度差异，不打分。`
-- **优缺点：** 真正有选择时每个选项至少 2 条优点、1 条缺点。
-  **缺点必须诚实**——一个所有选项都没缺点的简报不是简报，是推销。
-- **`Net:` 收尾。** 这是用户真正会去想的那个权衡。
-- **代价标注：** 涉及工作量时标出压缩比，如 `(人工: ~2 天 / agent: ~15 分钟)`。
-- **每份简报最多 4 个选项。**
+- **`D<N>` numbering:** the first decision in a session is `D1`, then increment. It's your
+  own counter, not a runtime value.
+- **ELI10 is always present**, always in plain language. The user should be able to follow
+  the trade-off without domain knowledge.
+- **`Recommendation` is always present**, including when you have no strong view:
+  `Recommendation: A — this is a taste call, no strong preference either way.`
+  Keep `(recommended)` on the default option even then.
+- **`Completeness` only when the options differ in coverage**, not in kind:
+  `10/10` complete / `7/10` happy path only / `3/10` shortcut.
+  If they differ in kind: `Note: options differ in kind, not coverage — no score.`
+- **Pros and cons:** minimum 2 pros and 1 con per option when the choice is real. **The cons
+  must be honest** — a brief where no option has a downside isn't a brief, it's a pitch.
+- **`Net:` closes it.** This is the line the user will actually think about.
+- **Cost labels** when effort is involved, e.g. `(human: ~2 days / agent: ~15 min)`, so the
+  compression is visible at the moment of deciding.
+- **At most 4 options per brief.**
 
-## 5 个以上选项：拆分，绝不丢弃
+## Five or more options: split, never drop
 
-简报上限是 4 个选项。有 5 个以上真实选项时，**绝不为了凑数而丢弃、合并或
-静默延后任何一个**。做法：
+The cap is 4 options. With five or more real options, **never drop, merge, or silently defer
+one to fit.** Either:
 
-- 拆成连续的多份简报（先出一份，用户答完再出下一份），或
-- 重组选项层级（先选类别，再选具体项）
+- split into sequential briefs (issue one, wait for the answer, issue the next), or
+- restructure into levels (pick a category first, then the specific item)
 
-**被有意排除的选项，必须在 `Net:` 之外单独声明，并写明排除理由。**
+**Deliberately excluded options must be stated explicitly, outside the `Net:` line, with the
+reason for excluding them.**
 
-> 示例：
-> 一个被我**有意排除**的选项，说明一下而不是吞掉：
-> **重构流程，让环不跨物料边界**。它可能成本最低，但它改的是冻结基线里的
-> 业务流程，属于**需求问题，不属于验证方法**——该单独去问干系人，
-> 不该混进这个决策。如果你们想走这条，我们需要另开一轮。
+> Example:
+> One option I **deliberately excluded**, stated rather than swallowed:
+> **reframe the process so the loop doesn't cross the material boundary.** It may be the
+> cheapest fix, but it changes the frozen business process — that's a **requirements
+> question, not a verification method** — and it should go to the stakeholder separately, not
+> be folded into this decision. If you want to take that path, we need a separate round.
 
-静默丢弃是禁止的。用户有权知道存在哪些选项、以及为什么没被列出。
+Silent omission is not allowed. The user is entitled to know what options exist and why any
+of them aren't listed.
 
-## 一份简报绝对不能是
+## What a brief must never be
 
-1. **没有推荐的菜单。** 你必须已经取了位。
-2. **一堵墙。** ELI10 超过 4 句，说明决策还没被框清楚。
-3. **后面跟着你自己的继续。** 发出简报，停下。对话里的下一句应该是用户的回答。
+1. **A menu with no recommendation.** You must have taken a position.
+2. **A wall of text.** If the ELI10 runs past four sentences, the decision isn't framed yet.
+3. **Followed by your own continuation.** Issue the brief, stop. The next thing in the
+   conversation should be the user's answer.
 
-## 发出之后
+## After issuing it
 
-**停。** 不要往下推进，不要"顺便"开始做别的事，
-不要在同一个回合里既问决策又给出下一步结论。
+**Stop.** Don't push forward, don't "while I'm here" do something else, don't ask the
+question and hand over a conclusion in the same turn.
 
-用户没答之前就继续，是这类对话里最严重的失败模式——
-它会让整个"前提确认"变成形式。
+Continuing before the user has answered is the most serious failure mode in this workflow —
+it turns the entire premise-confirmation step into a formality.

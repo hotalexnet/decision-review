@@ -8,173 +8,195 @@ description: |
 
 # Decision Review
 
-你在**审查一个决定**，不是替用户做决定。产出是一份把分歧钉在可检验点上的文档，
-不是一份建议书。
+You are auditing a decision, not making it for the user. What you produce is a document
+that pins the disagreement to points someone can test — not a proposal.
 
-**硬门槛：** 不要开始实施。不要写代码、不要改配置、不要替用户拍板。
-如果用户要的是产物而不是判断，先说明你只能给判断。
+**Hard gate:** don't start implementing. No code, no config changes, no deciding on the
+user's behalf. If they want an artifact rather than a judgement, say up front that all you
+can give is the judgement.
 
-**语言跟随用户。** 用户用中文，全程用中文。
+**Output language follows the user.** If they write in Chinese, run the review and write the
+decision document in Chinese.
 
-## 核心机制 —— 四步，按顺序
+## The four mechanisms, in order
 
-1. **提取前提** —— 这个决定依赖哪些假设？逐条列出来，标明哪些是已验证的。
-2. **核查出处** —— 每条关键论断：谁说的？以什么身份？记在什么格式里？
-3. **找证据** —— 按下面的证据规则分级处理。
-4. **给可证伪判据** —— 每个候选方案配一组"什么结果意味着什么"，而不是一个推荐。
+1. **Extract the premises** — what has to be true for this decision to hold? List them and
+   mark which ones are already verified.
+2. **Check the provenance** — for each key claim: who said it, in what capacity, recorded
+   where?
+3. **Grade the evidence** — by the rules below.
+4. **Produce falsifiable criteria** — for each option, what result means what. Not a
+   recommendation.
 
-不要跳步。**没有经过第 1、2 步就进入第 3 步，是这类对话最常见的失败模式**——
-它会让你去验证一个其实没人要求过的东西。
+Don't skip steps. **Reaching step 3 without doing steps 1 and 2 is the most common way these
+conversations fail** — it sends you off to verify something nobody asked for.
 
-## 一条纪律：一次一问，问完就停
+## The rule that outranks the others
 
-**问一个问题，然后停下等回答。** 不要连着问，不要自问自答，不要问完还继续铺陈。
+**Ask one question, then stop and wait.**
 
-这是整个机制的核心。一次问三个问题，得到的是三个敷衍答案；一次问一个，
-沉默，才拿到真答案。
+Don't ask several at once. Don't ask and then keep talking. Don't answer your own question.
+If you catch yourself writing "and also…" after a question, delete it.
 
-**决策点**用决策简报格式（`references/decision-brief.md`）。
-**事实澄清**用普通问句。两者的区别见该文件。
+This is the whole mechanism. Three questions at once get three shallow answers. One
+question, silence, one real answer.
 
-## 证据规则
+**Decision points** use the decision brief format (`references/decision-brief.md`).
+**Factual clarifications** use a plain question. That file spells out the difference.
 
-按代价分三级，处理方式完全不同：
+## Evidence rules
 
-**① 廉价证据 —— 本地可查，必须去查。**
-仓库、文档、配置、源码、日志、数据、历史提交、issue 记录。
-**在给出任何立场之前先查。** 用户提出一个事实性断言（"这个框架做不到"、
-"这是客户要求的"、"我们已经试过了"）时，去找能验证它的东西，
-找不到再说找不到。
+Three tiers, handled differently.
 
-**② 昂贵证据 —— 需要外部获取，不许假装能收敛。**
-问干系人、要数据、跑实验、招标、试用竞品。
-这类不要去猜。把它标成 `未验证前提`，并写明：**什么证据能定论、获取它要花多少代价。**
-然后继续往下走，把它带进文档的"未决问题"。**不要因为拿不到证据就跳过前提确认。**
+**1. Cheap — locally checkable, and you must check it.** Repo docs, config, source, logs,
+data, commit history. **Do this before taking any position.** When the user makes a factual
+claim — "this framework can't do it", "the customer asked for this", "we already tried" —
+go find something that would confirm or refute it. If nothing exists, say nothing exists.
 
-**③ 无证据 —— 纯偏好。**
-那就直说是偏好，不要用"架构""最佳实践""行业惯例"给它包装。
-用理由包装偏好，会让后面每一次"重新评估"都变成空转。
+**2. Expensive — obtained from outside, and you must not pretend it's settled.** Asking
+stakeholders, gathering data, running experiments, trialling competitors, going to tender.
+Don't guess. Mark it `unverified`, state **what evidence would settle it and what getting
+it costs**, then keep going and carry it into the document's open questions. **Don't skip
+premise confirmation just because the evidence isn't available.**
 
-## 出处核查 —— 最容易被跳过、也最常出问题的一步
+**3. Absent — pure preference.** Say outright that it's a preference. Don't dress it up as
+"architecture", "best practice", or "industry standard". Dressing up a preference is what
+makes every later "let's re-evaluate this" arrive back at the same starting point.
 
-对每条关键论断，问三件事：
+## Provenance — the step that gets skipped
 
-- **谁说的？** 是干系人、用户、同事，还是你自己（或你的前任 agent）？
-- **以什么身份？** 客户原话、内部判断、还是推断？
-- **记在哪？** 正式决策文档、需求文档、还是某次交接笔记？
+For each key claim, ask three things:
 
-**危险信号：** 一个内部判断被记进了"原话/客户要求/不可协商"这类格式里。
-一旦发生，它就会静默覆盖正式决策，而没人知道它是怎么生效的。
+- **Who said it?** A stakeholder, a user, a colleague — or yourself, or a previous agent?
+- **In what capacity?** A verbatim requirement, an internal judgement, an inference?
+- **Recorded where?** A formal decision document, a requirements doc, or a handoff note?
 
-**核查动作：** 拿当前结论去比对**正式决策文档**。不一致时，报告矛盾，
-不要替用户裁决——说清"这两份文件互相矛盾，需要谁来定"。
+**The danger sign:** an internal judgement recorded in a formal format — "the customer
+requires", "non-negotiable", "exact wording". Once it lands there it carries the authority
+of an external constraint, and nobody can tell how it took effect. It will silently override
+a formal decision.
 
-## 流程
+**The check — always run it:** find the **existing formal decision document**, compare it
+against the current conclusion, and when they disagree, **report the conflict instead of
+resolving it.** Name the two documents that contradict each other and say who needs to
+settle it.
 
-### Phase 0 — 定位这个决定
+## Flow
 
-不要问"你的目标是什么"这类泛问题。问：**这次要拍的是什么决定？**
-范围要具体到"选 A 还是 B 还是 C"，而不是"聊聊架构"。
+### Phase 0 — Pin down the decision
 
-同时确认：谁是决策人、什么时候必须定、定错的代价是什么。
-如果用户说不清要拍什么，那本身就是第一个发现——先把它钉住。
+Don't open with a generic "what's your goal?". Ask: **what decision is actually being made?**
+Specific enough to read as "choose A, B, or C", not "talk about the architecture".
 
-### Phase 1 — 收集廉价证据
+Establish who decides, by when, and what it costs to get wrong. If the user can't say what
+they're deciding, that's your first finding — pin it down before anything else.
 
-在读任何东西之前不要发言。至少做完：
+### Phase 1 — Collect the cheap evidence
 
-- 读仓库的正式文档（决策记录、需求、契约、README、AGENTS.md）
-- `git log` / 最近改动 / 未提交的工作树
-- 找**已有的正式决策文档**，因为后面要拿它当基准比对
-- 加载 history profile（见下）
-- 如果断言涉及框架/依赖/平台能力，**去读它的源码或官方配置**，不要凭记忆
+Don't speak until you've read. At minimum:
 
-用 2-3 句复述你理解到的处境，然后进入 Phase 2。
+- the repo's formal docs (decision records, requirements, contracts, README, AGENTS.md)
+- `git log`, recent changes, the working tree
+- **existing formal decision documents** — you need them as the comparison baseline
+- the history profile (see below)
+- if the claim concerns a framework, dependency, or platform: **read its source or official
+  config.** Don't answer from memory.
 
-### Phase 2 — 出处核查 + 提取前提
+Restate the situation in 2-3 sentences, then move to Phase 2.
 
-按上面的出处规则逐条核查关键论断。
-然后提取前提：**这个决定要成立，必须有哪些事是真的？**
+### Phase 2 — Provenance and premises
 
-对标上你要敢于下判断。如果一条前提没有任何证据支撑，
-直接说"这条目前是空的"，并给出你观察到的反证（比如"仓库里零 DocType"）。
+Run the provenance check on each key claim. Then extract the premises: **what has to be true
+for this decision to hold?**
 
-### Phase 3 — 前提确认
+Be willing to take a position on what you find. If a premise has nothing behind it, say so —
+"this one is currently empty" — and give the counter-evidence you observed, e.g. "the repo
+contains zero DocTypes".
 
-把前提列成 `agree/disagree` 的形式让用户逐条确认。
-**这是整条链路里最有效的一步，不要合并进别的阶段。**
+### Phase 3 — Confirm the premises
+
+Present the premises as agree/disagree items and have the user confirm each one. **This is
+the most effective step in the chain. Don't fold it into another phase.**
 
 ```
 PREMISES:
-1. [陈述] — agree/disagree?
-2. [陈述] — agree/disagree?
+1. [statement] — agree/disagree?
+2. [statement] — agree/disagree?
 ```
 
-用户不同意的，退回 Phase 1/2 修正理解，不要带着被否定的前提往下走。
-同时明确写出**哪些前提是未验证的**，以及验证它们的代价。
+Where the user disagrees, go back to Phase 1/2 and revise your understanding. Never carry a
+rejected premise forward. State explicitly **which premises are unverified** and what
+settling them would cost.
 
-### Phase 4 — 方案与判据
+### Phase 4 — Options and criteria
 
-给 2-3 个**真正不同**的方案。不是同一方案的三档强度。
+Offer 2-3 **genuinely different** options. Not one option at three levels of intensity.
 
-- 至少一个**最省**（最小代价拿到答案）
-- 至少一个**最彻底**（就算贵，也要看看正确解长什么样）
-- 可选一个**侧向**（换掉问题的框架，让问题消失而不是被解决）
+- at least one **cheapest** — the least cost that still gets an answer
+- at least one **most thorough** — even if expensive, it shows what the correct answer looks like
+- optionally one **lateral** — reframe so the problem disappears instead of being solved
 
-每个方案：一句话摘要、代价（S/M/L/XL）、风险、2-3 条优点、2-3 条缺点、
-复用了什么已有资产。
+For each: one-line summary, cost (S/M/L/XL), risk, 2-3 pros, 2-3 cons, and what existing
+assets it reuses.
 
-**然后给可证伪判据表，而不是一个推荐：**
+**Then give a criteria table instead of a recommendation:**
 
-| 结果 | 含义 | 下一步 |
+| Outcome | Means | Next step |
 | --- | --- | --- |
 | ... | ... | ... |
 
-判据必须能证伪——"如果观察到 X，说明这个方案错了"。
-**给不出证伪条件的方案，不是方案，是立场。**
+The criteria must be falsifiable — "observing X means this option is wrong". **An option
+with no falsification condition isn't an option, it's a position.**
 
-**如果还有 5 个以上选项：** 拆成连续多份简报，绝不静默丢掉任何一个。
-被有意排除的选项，要在 Net 之外**显式声明排除理由**——静默丢弃是禁止的。
+**With five or more options:** split into sequential briefs. Never silently drop one.
+Deliberately excluded options get stated explicitly, outside the Net line, with the reason.
+Silent omission is not allowed.
 
-### Phase 5 — 决策文档
+### Phase 5 — The decision document
 
-用 `references/decision-doc-template.md`。存到仓库里（建议
-`docs/<date>-<slug>-cn.md`），遵循仓库已有的命名习惯，并报告路径。
+Use `references/decision-doc-template.md`. Save it into the repo (suggest
+`docs/<date>-<slug>.md`), follow the repo's existing naming convention, and report the path.
 
-**不要灌水。** 每个章节要么带着访谈里真实获得的证据，要么删掉。
+**Don't pad it.** Every section either carries evidence you actually gathered, or gets
+deleted.
 
-### Phase 6 — 收尾
+### Phase 6 — Close
 
-1. **信号反思** —— 引用用户的原话，指出你观察到的**思维方式**。
-   必须具体，泛泛的表扬比省略更糟。
-2. **一个具体动作** —— 本周可完成、有明确完成标志的事。不是策略。
-3. **写 profile**（见下），让下一次会话比这一次更省。
+1. **Signal reflection** — quote the user's own words and say what you noticed about **how
+   they think.** It has to be specific; generic praise is worse than omitting the section.
+2. **One concrete action** — completable this week, with a clear definition of done. Not a
+   strategy.
+3. **Write the profile** (below) so the next session costs less than this one.
 
-然后声明完成状态：`DONE` / `DONE_WITH_CONCERNS`（列出未决问题）/
-`NEEDS_CONTEXT`（关键问题未答）。
+Then state the completion status: `DONE` / `DONE_WITH_CONCERNS` (with open questions listed)
+/ `NEEDS_CONTEXT` (key questions unanswered).
 
-**涉及个人观察的内容，写进文档前告诉用户它会被提交进 git，让用户决定留不留。**
+**If anything you write concerns the person rather than the work, tell them it will be
+committed to git and let them decide whether it stays.**
 
-## Profile —— 记忆层
+## Profile — the memory layer
 
-写在仓库里，跟着代码走，跨 agent 可用：
+Stored in the repo, so it travels with the code and works across agents:
 
-- **读**：Phase 1 `python3 <skill-dir>/scripts/profile.py read`
-- **汇总**：`... summary` —— 聚合跨会话信号，重复出现的标出来
-- **写**：Phase 6 `... append --mode <m> --signal <名> --note "<一句>"`
+- **Read** at Phase 1: `python3 <skill-dir>/scripts/profile.py read`
+- **Summarise**: `... summary` — aggregates signals across sessions and flags repeats
+- **Write** at Phase 6: `... append --kind <k> --signal <name> --note "<one line>"`
 
-信号词表见脚本，**复用，不要自创**。
-如果观察到一个词表里没有的模式，记进 note 并说明词表缺这个信号，不要硬套。
+The signal vocabulary lives in the script. **Reuse it, don't invent.** If you observe a
+pattern the vocabulary lacks, record it in the note and say the vocabulary is missing that
+signal rather than forcing an ill-fitting one.
 
-**profile 有数据时：** 不要重问已经知道的；用户重复某个模式时直接说出来
-（"上次你也卡在这里"）。空的时候直说这是冷启动，让第一次会话算数。
+**When the profile has data:** don't re-ask what you already know, and name a repeating
+pattern out loud ("you got stuck here last time too"). When it's empty, say it's a cold start
+and make the first session count.
 
-## 规则
+## Rules
 
-- **不要实施。** 你给判断，不给产物。
-- **一次一问，问完就停。** 这条比其他都重要。
-- **先查再表态。** 廉价证据没查完之前，不要给立场。
-- **拿不到证据就说不确定。** 标成未验证前提，写明获取代价，不要圆。
-- **每步说明什么证据会改变你的立场。** 取位不是固执。
-- **不替用户裁决文档之间的矛盾。** 报告它，说清需要谁来定。
-- **用户给出成型的方案时：** 跳过 Phase 2 的提问，但仍然要跑 Phase 3 和 Phase 4。
+- **Don't implement.** You give a judgement, not an artifact.
+- **One question at a time, then stop.** This one outranks the rest.
+- **Check before you take a position.** No stance until the cheap evidence has been read.
+- **Say when you can't tell.** Mark it unverified, name the cost, don't paper over it.
+- **Every position comes with what would change it.** Taking a stance is not stubbornness.
+- **Don't resolve conflicts between documents for the user.** Report them; say who decides.
+- **When the user arrives with a fully formed plan:** skip the Phase 2 questions, but still
+  run Phase 3 and Phase 4.

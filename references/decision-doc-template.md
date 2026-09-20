@@ -1,105 +1,108 @@
-# 决策文档模板
+# Decision Document Template
 
-用用户的语言写。每个章节要么带着真实获得的证据，要么删掉——
-**填空比留白更糟**，它会让文档看起来比实际可靠。
+Write it in the user's language. Every section either carries evidence you actually gathered,
+or gets deleted. **Filling a section with filler is worse than leaving it out** — it makes the
+document look more reliable than it is.
 
-存到 `docs/<date>-<slug>-cn.md`，遵循仓库已有的命名习惯，并报告路径。
+Save to `docs/<date>-<slug>.md`, follow the repo's existing naming convention, and report the
+path.
 
-涉及对个人观察的章节（第 8 节），写之前告诉用户它会被提交进 git。
+For section 8, which concerns a person rather than the work, tell the user before you write
+it that it will be committed to git.
 
 ---
 
 ```markdown
-# <决定名>：<一句话说明这是一个什么决定>
+# <Decision name>: <one line saying what decision this is>
 
-状态：DRAFT
-生成于：<date>
-仓库：<repo>
-分支：<branch>
-决策人：<who>
-期限：<何时必须定>
+Status: DRAFT
+Generated: <date>
+Repo: <repo>
+Branch: <branch>
+Decision maker: <who>
+Deadline: <by when it must be settled>
 
-## 1. 决策背景
+## 1. Context
 
-<这是什么决定，为什么现在要定。范围要具体到"选 A 还是 B 还是 C"。
-不要写成项目介绍。>
+<What this decision is and why it has to be made now. Specific enough to read as
+"choose A, B, or C". Not a project introduction.>
 
-## 2. 已获得的证据
+## 2. Evidence gathered
 
-| 证据 | 来源 | 结论 |
+| Evidence | Source | Bearing |
 | --- | --- | --- |
-| <一句话> | <可指认的出处：文件:行、命令、实测> | <它支持或推翻什么> |
+| <one line> | <something pointable: file:line, command, measurement> | <what it supports or refutes> |
 
-<只写真正查过的东西。没查的要出现在第 7 节，不要出现在这里。>
+<Only what you actually checked. Anything unchecked belongs in section 7, not here.>
 
-## 3. 前提
+## 3. Premises
 
-| # | 前提 | 状态 | 依据 |
+| # | Premise | Status | Basis |
 | --- | --- | --- | --- |
-| 1 | <陈述> | 已验证 / 未验证 / 偏好 | <出处，或"待验证：需要 X" |
+| 1 | <statement> | verified / unverified / preference | <source, or "to settle: needs X"> |
 
-<用户已确认 agree 的，标"已确认"。
-被用户明确否定的，**保留在表里并标"已否定"**——不要删掉，
-它们是需要避免被重新发现的死路。>
+<Mark the ones the user confirmed as "confirmed".
+Premises the user explicitly rejected **stay in the table marked "rejected"** — don't delete
+them. They are dead ends that need to stay dead.>
 
-## 4. 已否定的路径（不要重新发现）
+## 4. Rejected paths (don't rediscover these)
 
-- <被推翻的结论> —— <用什么证据推翻的>
-- <被排除的选项> —— <排除理由>
+- <overturned conclusion> — <what evidence overturned it>
+- <excluded option> — <why it was excluded>
 
-<这一节是给未来的自己和其他 agent 看的。
-没有它，下一轮会从零开始重新走一遍同样的弯路。>
+<This section is for your future self and for other agents. Without it, the next round walks
+the same dead ends all over again.>
 
-## 5. 方案
+## 5. Options
 
-### A) <名称>
-摘要 / 代价(S/M/L/XL) / 风险 / 优点 / 缺点 / 复用
+### A) <name>
+Summary / Cost (S/M/L/XL) / Risk / Pros / Cons / Reuses
 
-### B) <名称>
+### B) <name>
 ...
 
-### C) <名称>（可选）
+### C) <name> (optional)
 ...
 
-<至少 2 个真正不同的方案，不是同一方案的三档强度。
-5 个以上要拆成多份简报，且**任何被排除的选项都必须在这一节显式写明排除理由**。>
+<At least 2 genuinely different options — not one option at three levels of intensity.
+Five or more means splitting into separate briefs, and **any excluded option must be stated
+here with its reason for exclusion**.>
 
-## 6. 判据
+## 6. Criteria
 
-| 结果 | 含义 | 下一步 |
+| Outcome | Means | Next step |
 | --- | --- | --- |
-| <观察到 X> | <说明什么> | <做什么> |
+| <observing X> | <what it tells you> | <what to do> |
 
-<必须有能证伪的条目：什么结果意味着哪个方案是错的。
-给不出证伪条件的方案不是方案，是立场。>
+<Must include falsifiable entries: a result that means some option is wrong. An option with
+no falsification condition is a position, not an option.>
 
-## 7. 未决问题
+## 7. Open questions
 
-1. <问题> —— <什么证据能定论> —— <获取代价>
+1. <question> — <what evidence would settle it> — <cost of getting it>
 2. ...
 
-<这一节非空时，完成状态是 DONE_WITH_CONCERNS。>
+<While this section is non-empty, the completion status is DONE_WITH_CONCERNS.>
 
-## 8. 观察到的思维方式
+## 8. What I noticed about how you think
 
-<2-4 条具体观察，引用用户原话。泛泛的表扬比删掉这一节更糟。>
+<2-4 specific observations, quoting the user's own words. Generic praise is worse than
+deleting the section.>
 
-## 9. The Assignment
+## 9. The assignment
 
-<一个本周可完成、有明确完成标志的具体动作。
-不是策略，不是"继续研究"。写明完成标志和反向信号——
-如果什么都没发现，那说明什么。>
+<One action, completable this week, with a clear definition of done. Not a strategy, not
+"keep researching". Include the reverse signal — if nothing turns up, what does that mean.>
 ```
 
 ---
 
-## 质量自检
+## Quality check before finishing
 
-写完前过一遍：
-
-- 第 2 节的每一条，我能指出出处吗？（指不出就挪到第 7 节）
-- 第 3 节里有 `未验证` 的条目吗？如果全是 `已验证`，多半是我没真往回推
-- 第 4 节非空吗？空的话，说明我没在推翻任何东西，只是记录
-- 第 6 节有能证伪的条目吗？
-- 第 9 节的动作用完成标志吗？
-- 有没有哪一节是我为了显得完整而写的？
+- Can I point at a source for every line in section 2? (If not, it moves to section 7)
+- Are there any `unverified` entries in section 3? If everything is `verified`, I probably
+  didn't work backwards properly
+- Is section 4 non-empty? If it is empty, I wasn't overturning anything, only recording
+- Are there falsifiable entries in section 6?
+- Does the action in section 9 have a definition of done?
+- Is any section there only to look complete?

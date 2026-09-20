@@ -1,8 +1,13 @@
 # Provenance
 
-`decision-brief-protocol.md` 提取自 gstack 的 `/office-hours`（MIT, Garry Tan），
-是 `references/decision-brief.md` 的原始出处。
+`decision-brief-protocol.md` is extracted from gstack's `/office-hours` skill
+(MIT, Copyright (c) 2026 Garry Tan). It is the original source of
+`references/decision-brief.md`.
 
-gstack 的 office-hours 正文（1230 行，产品/市场诊断）评估后**未采用**：
-它属于产品/市场验证，与 decision-review 的收敛方式不同。
-在 pi 中继续使用 gstack 版本（跑在 Claude Code 里）。
+The main body of that skill — 1230 lines of product/market diagnostics — was evaluated and
+deliberately **not** carried over. It converges by market contact, which is a different
+mechanism from investigation, so it stays where it works: gstack's own version, running in
+Claude Code.
+
+See [`../THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md) for the per-file derivation and
+the full license text.
