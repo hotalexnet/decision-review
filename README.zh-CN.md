@@ -168,10 +168,30 @@ references/
   decision-doc-template.md          输出模板 + 质量自检
 scripts/
   profile.py                        仓库内的决策画像（read / summary / append）
+  validate.py                       校验 frontmatter 和引用文件
 provenance/                         借来的简报格式，留档可查
 ```
 
-常驻加载的只有 `SKILL.md`（约 175 行），references 用到才读。
+常驻加载的只有 `SKILL.md`（约 200 行），references 用到才读。
+
+## 改完怎么验
+
+frontmatter 写坏了是**静默失败**：harness 什么都解析不到，症状是"这个技能怎么不触发"，而不是任何报错。提交前跑一下：
+
+```bash
+python3 -m pip install pyyaml
+python3 scripts/validate.py
+```
+
+它检查 fence 有没有闭合、内容是不是合法 YAML、`name` 和 `description` 在不在、以不在消费端强制的长度上限内，以及 `SKILL.md` 里提到的 `references/` 文件是不是真的存在。
+
+它知道两个上限：
+
+- **dsh** 超过 `catalogDescriptionMaxLength`（默认 500）会截断描述，尾巴静默丢掉——所以超了只是**警告**
+- **Codex** 的 `descriptionLimit` 是 1024 且 `descriptionLimitBehavior` 为 `error`——超了技能直接被拒——所以超了是**错误**
+
+CI 在每次 push 和 PR 时跑同一个脚本，见
+[`.github/workflows/validate-skill.yml`](./.github/workflows/validate-skill.yml)。
 
 ## 记忆层
 

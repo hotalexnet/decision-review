@@ -183,10 +183,35 @@ references/
   decision-doc-template.md          output template + quality self-check
 scripts/
   profile.py                        repo-local decision profile (read / summary / append)
+  validate.py                       frontmatter and reference checker
 provenance/                         the borrowed decision-brief format, kept as source of record
 ```
 
-`SKILL.md` is the only always-loaded file (~175 lines); references load on demand.
+`SKILL.md` is the only always-loaded file (~200 lines); references load on demand.
+
+## Validating changes
+
+Malformed frontmatter fails **silently**: the harness parses nothing, and the symptom is
+"the skill never triggers", not an error. Run the checker before committing:
+
+```bash
+python3 -m pip install pyyaml
+python3 scripts/validate.py
+```
+
+It verifies that the fence opens and closes, that the block is valid YAML, that `name` and
+`description` are present and within the limits consumers enforce, and that every
+`references/` path named in `SKILL.md` exists.
+
+Two limits it knows about:
+
+- **dsh** truncates a description past `catalogDescriptionMaxLength` (default 500) — the tail
+  is lost silently, so anything past it is a warning
+- **Codex** sets `descriptionLimit` to 1024 with `descriptionLimitBehavior: "error"` — past
+  that, the skill is rejected, so it's an error
+
+CI runs the same script on every push and pull request — see
+[`.github/workflows/validate-skill.yml`](./.github/workflows/validate-skill.yml).
 
 ## The memory layer
 
