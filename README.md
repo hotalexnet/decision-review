@@ -1,5 +1,6 @@
 # decision-review
 
+[![Validate skill](https://github.com/hotalexnet/decision-review/actions/workflows/validate-skill.yml/badge.svg)](https://github.com/hotalexnet/decision-review/actions/workflows/validate-skill.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Runtime: Python 3](https://img.shields.io/badge/runtime-python3-blue.svg)](https://www.python.org/)
 [![Standard: Agent Skills](https://img.shields.io/badge/standard-agent--skills-2ea44f.svg)](https://agentskills.io/specification)
